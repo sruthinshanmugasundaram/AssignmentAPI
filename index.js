@@ -6,7 +6,7 @@ const authRoute = require("./routes/auth");
 const userRoute = require("./routes/users");
 const movieRoute = require("./routes/movies");
 const listRoute = require("./routes/lists");
-
+const cors = require('cors');
 
 dotenv.config();
 
@@ -24,6 +24,23 @@ mongoose
 
     // Middleware to parse JSON requests
     app.use(express.json());
+    const allowedOrigins = ['https://dynamic-pastelito-a75099.netlify.app'];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+        return callback(new Error(msg), false);
+      }
+
+      return callback(null, true);
+    },
+  })
+);
 
     // Routes
     app.use("/api/auth", authRoute);
